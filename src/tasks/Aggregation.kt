@@ -14,5 +14,13 @@ TODO: Write aggregation code.
  The corresponding test can be found in test/tasks/AggregationKtTest.kt.
  You can use 'Navigate | Test' menu action (note the shortcut) to navigate to the test.
 */
-fun List<User>.aggregate(): List<User> =
-    this
+fun List<User>.aggregate(): List<User> {
+     return this.fold<User, MutableList<User>>(mutableListOf()) { acc, user ->
+         val loginUser = user.login
+         if (acc.none { it.login == loginUser }) {
+             val contributions = this.filter { it.login == loginUser }.sumOf { it.contributions }
+             acc.add(User(loginUser, contributions))
+         }
+         acc
+    }.sortedByDescending { it.contributions }
+}
